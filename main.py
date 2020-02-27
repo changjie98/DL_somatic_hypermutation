@@ -50,13 +50,14 @@ for i in range(0, len(reference_genelist)//2):  #2i是基因名，2i+1是基因
        np.savetxt('nucleotideCounts/'+gene_name + '.csv', nt_list, fmt='%s',delimiter=';')  # 每个基因创建一个csv文件来记录各个位点的碱基数，因为csv文件的命名不能出现*|所以用了一些字符串操作函数
 
 
+CDR_region = find_CDR()
 csvfile_list = file_list('nucleotideCounts/', ext='.csv')
 for csvfile in csvfile_list:
     freqs, depth = getAltFreq(csvfile[:-4])
     Mutcounts = freqs * np.transpose([depth, depth, depth, depth])
     Mutcounts = Mutcounts.astype(int)
     np.savetxt('MutCounts/'+ csvfile[:-4] + '.txt', Mutcounts, fmt='%s')
-    plotMutations(freqs, csvfile[:-4], display=False)
+    plotMutations(freqs, csvfile[:-4], CDR_region[csvfile[:-4]])
 
 referencefile.close()
 bamfile.close()

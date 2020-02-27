@@ -12,8 +12,7 @@ def file_list(dirname, ext='.csv'):
     """
     return list(filter(lambda filename: os.path.splitext(filename)[1] == ext,os.listdir(dirname)))
 
-
-def plotMutations(Freqs, figName, display=False, region=0):
+def plotMutations(Freqs, figName, region=0):
     ### This function returns NumPy arrays of prediction intervals.
     ### Parameters:    Test: Numpy array [length(gene) x 4]
     ###                        Alternative nucleotide frequencies in sample as returned by getAltFreq
@@ -28,15 +27,15 @@ def plotMutations(Freqs, figName, display=False, region=0):
 
     # Mutcounts = Freqs * np.transpose([Depths, Depths, Depths, Depths])
     colors = ['#57bddb', '#ea4848', '#3bb971', '#f39c12']
-
+    Freqs[0:region[0],:]=[0,0,0,0]
+    Freqs[region[1]:region[2],:]=[0,0,0,0]
+    Freqs[region[3]:len(Freqs), :] = [0, 0, 0, 0]
     # Plot position-wise mismatch frequency
     plt.plot(Freqs[:, 0] + Freqs[:, 1] + Freqs[:, 2] + Freqs[:, 3], 'b')
     plt.rcParams.update({'font.size': 10})
     plt.axis([0, len(Freqs), 0, 0.2])
     plt.xlabel('Position (bp)')
     plt.ylabel('Mutation frequency')
-    if display:
-        plt.show()
     plt.savefig('MutCounts/'+figName + '.pdf', bbox_inches='tight')
     plt.close()
 
@@ -66,10 +65,13 @@ def plotMutations(Freqs, figName, display=False, region=0):
     axarr[1, 0].set_xlabel('Position (bp)')
     axarr[1, 0].set_ylabel('Mut. frequency')
     axarr[0, 0].set_ylabel('Mut. frequency')
-    if display:
-        plt.show()
     plt.savefig('MutCounts/'+figName + '_bases.pdf', bbox_inches='tight')
     plt.close()
     return
 
 
+"""CDR_region = find_CDR()
+freqs, depth = getAltFreq('IGHV1-18_01')
+Mutcounts = freqs * np.transpose([depth, depth, depth, depth])
+Mutcounts = Mutcounts.astype(int)
+plotMutations(freqs, 'IGHV1-18_01', CDR_region['IGHV1-18_01'])"""
